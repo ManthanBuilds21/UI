@@ -19,7 +19,7 @@ export default function Navbar() {
     <>
       <header className="page-shell fixed inset-x-0 top-0 z-[110] pt-4 sm:pt-6">
         <div className="section-frame">
-          <div className="flex items-center justify-between rounded-full border border-black/10 bg-white/72 px-4 py-3 shadow-[0_10px_32px_rgba(17,17,17,0.08)] backdrop-blur-xl sm:px-6">
+          <div className="flex items-center justify-between rounded-full border border-black/10 bg-white/[0.72] px-4 py-3 shadow-[0_10px_32px_rgba(17,17,17,0.08)] backdrop-blur-xl sm:px-6">
             <Link to="/" className="font-display text-[1.65rem] leading-none text-black">
               MANTHAN
             </Link>
@@ -67,7 +67,7 @@ export default function Navbar() {
       <AnimatePresence>
         {open ? (
           <motion.div
-            className="fixed inset-0 z-[130] bg-black/35 px-4 py-4 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-[130] bg-black/[0.35] px-4 py-4 backdrop-blur-sm lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -110,7 +110,7 @@ export default function Navbar() {
                   <p className="mt-3 text-2xl font-semibold">{wishlist.length}</p>
                 </div>
                 <div className="rounded-[1.5rem] bg-black p-4 text-white">
-                  <p className="eyebrow text-white/45">Cart</p>
+                  <p className="eyebrow text-white/[0.45]">Cart</p>
                   <p className="mt-3 text-2xl font-semibold">{cartCount}</p>
                 </div>
               </div>

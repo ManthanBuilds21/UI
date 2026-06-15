@@ -29,7 +29,7 @@ export default function LookbookSection() {
               <div className="p-5 sm:p-6">
                 <p className="eyebrow">{moment.location}</p>
                 <h3 className="mt-3 text-[2.3rem] leading-[0.92]">{moment.title}</h3>
-                <p className="mt-4 text-sm leading-7 text-black/68">{moment.description}</p>
+                <p className="mt-4 text-sm leading-7 text-black/[0.68]">{moment.description}</p>
               </div>
             </article>
           ))}
@@ -44,10 +44,10 @@ export default function LookbookSection() {
           <div className="grid gap-5">
             {lookbookNotes.map((note, index) => (
               <div key={note} className="rounded-[1.5rem] border border-black/10 bg-white/70 p-5">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/48">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-black/[0.48]">
                   0{index + 1}
                 </p>
-                <p className="mt-3 text-base leading-7 text-black/72">{note}</p>
+                <p className="mt-3 text-base leading-7 text-black/[0.72]">{note}</p>
               </div>
             ))}
           </div>

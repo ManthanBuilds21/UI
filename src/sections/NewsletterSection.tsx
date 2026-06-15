@@ -13,7 +13,7 @@ export default function NewsletterSection() {
             <h2 className="mt-4 max-w-4xl text-[3.4rem] leading-[0.88] sm:text-[5.4rem] lg:text-[7rem]">
               Stay close to the next campaign drop.
             </h2>
-            <p className="mt-5 max-w-xl text-sm leading-7 text-black/68 sm:text-base">
+            <p className="mt-5 max-w-xl text-sm leading-7 text-black/[0.68] sm:text-base">
               Early access to new capsules, behind-the-scenes editorials, and product stories from the studio.
             </p>
           </div>

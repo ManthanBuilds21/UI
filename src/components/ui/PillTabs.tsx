@@ -19,7 +19,7 @@ export default function PillTabs({ active, items, onChange }: PillTabsProps) {
             type="button"
             onClick={() => onChange(item)}
             className={`relative rounded-full px-5 py-3 text-xs font-semibold uppercase tracking-[0.24em] transition-colors duration-300 ${
-              isActive ? 'text-white' : 'border border-black/10 bg-white text-black/72 hover:text-black'
+              isActive ? 'text-white' : 'border border-black/10 bg-white text-black/[0.72] hover:text-black'
             }`}
           >
             {isActive && (

@@ -12,7 +12,7 @@ export default function BrandStorySection() {
           style={{ backgroundColor: '#111111' }}
         >
           <div>
-            <p className="eyebrow text-white/45">Brand Story</p>
+            <p className="eyebrow text-white/[0.45]">Brand Story</p>
             <h2 className="mt-5 max-w-4xl text-[3.8rem] leading-[0.88] sm:text-[5.6rem] lg:text-[7rem]">
               MANTHAN turns streetwear into a visual campaign language.
             </h2>
@@ -20,9 +20,9 @@ export default function BrandStorySection() {
 
           <div className="grid gap-5 lg:grid-cols-3">
             {brandValues.map((value) => (
-              <div key={value.title} className="rounded-[1.6rem] border border-white/12 bg-white/6 p-5">
+              <div key={value.title} className="rounded-[1.6rem] border border-white/[0.12] bg-white/[0.06] p-5">
                 <h3 className="text-[1.8rem] leading-[0.92]">{value.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-white/68">{value.description}</p>
+                <p className="mt-3 text-sm leading-7 text-white/[0.68]">{value.description}</p>
               </div>
             ))}
           </div>

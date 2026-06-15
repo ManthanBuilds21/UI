@@ -33,8 +33,8 @@ export default function CartPage() {
         <Reveal className="section-frame mt-10 campaign-surface bg-[var(--cloud)] p-6 sm:p-8 lg:p-10">
           <div className="grid gap-8 xl:grid-cols-[1fr_0.9fr] xl:items-end">
             <div>
-              <div className="ghost-label ghost-outline text-black/16">Empty</div>
-              <p className="mt-6 max-w-xl text-sm leading-7 text-black/68 sm:text-base">
+              <div className="ghost-label ghost-outline text-black/[0.16]">Empty</div>
+              <p className="mt-6 max-w-xl text-sm leading-7 text-black/[0.68] sm:text-base">
                 Your cart is ready for product. Add hoodies, cargos, outerwear, or sneakers from the collections page to see the full luxury cart layout in action.
               </p>
             </div>
@@ -66,7 +66,7 @@ export default function CartPage() {
                       <div>
                         <p className="eyebrow">{product.category}</p>
                         <h2 className="mt-3 text-[2.2rem] leading-[0.92]">{product.name}</h2>
-                        <p className="mt-3 text-sm leading-7 text-black/68">Size: {item.size}</p>
+                        <p className="mt-3 text-sm leading-7 text-black/[0.68]">Size: {item.size}</p>
                       </div>
                       <span className="text-lg font-semibold">{formatPrice(product.price)}</span>
                     </div>
@@ -79,7 +79,7 @@ export default function CartPage() {
                       <button
                         type="button"
                         onClick={() => removeCartItem(item.productId, item.size)}
-                        className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-black/52"
+                        className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-black/[0.52]"
                       >
                         <Trash2 className="h-4 w-4" />
                         Remove
@@ -92,10 +92,10 @@ export default function CartPage() {
           </div>
 
           <Reveal className="campaign-surface h-fit bg-black p-6 text-white sm:p-8">
-            <p className="eyebrow text-white/45">Summary</p>
+            <p className="eyebrow text-white/[0.45]">Summary</p>
             <h2 className="mt-4 text-[2.8rem] leading-[0.92] sm:text-[3.6rem]">Checkout UI</h2>
 
-            <div className="mt-8 grid gap-4 text-sm uppercase tracking-[0.24em] text-white/64">
+            <div className="mt-8 grid gap-4 text-sm uppercase tracking-[0.24em] text-white/[0.64]">
               <div className="flex items-center justify-between">
                 <span>Subtotal</span>
                 <span className="text-white">{formatPrice(subtotal)}</span>
@@ -104,7 +104,7 @@ export default function CartPage() {
                 <span>Shipping</span>
                 <span className="text-white">{shipping === 0 ? 'Free' : formatPrice(shipping)}</span>
               </div>
-              <div className="flex items-center justify-between border-t border-white/12 pt-4 text-white">
+              <div className="flex items-center justify-between border-t border-white/[0.12] pt-4 text-white">
                 <span>Total</span>
                 <span>{formatPrice(total)}</span>
               </div>
@@ -114,7 +114,7 @@ export default function CartPage() {
               Proceed to checkout
             </button>
 
-            <p className="mt-5 text-sm leading-7 text-white/62">
+            <p className="mt-5 text-sm leading-7 text-white/[0.62]">
               UI-only checkout state designed to demonstrate hierarchy, spacing, and premium interaction styling.
             </p>
           </Reveal>

@@ -110,11 +110,11 @@ img {
   }
 
   .eyebrow {
-    @apply text-[11px] font-semibold uppercase tracking-[0.35em] text-black/55;
+    @apply text-[11px] font-semibold uppercase tracking-[0.35em] text-black/[0.55];
   }
 
   .section-copy {
-    @apply max-w-xl text-sm leading-7 text-black/68 sm:text-base;
+    @apply max-w-xl text-sm leading-7 text-black/[0.68] sm:text-base;
   }
 
   .button-primary {
@@ -122,7 +122,7 @@ img {
   }
 
   .button-secondary {
-    @apply inline-flex items-center justify-center rounded-full border border-black/15 bg-white/70 px-6 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-black backdrop-blur transition-colors duration-300 hover:bg-white;
+    @apply inline-flex items-center justify-center rounded-full border border-black/[0.15] bg-white/70 px-6 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-black backdrop-blur transition-colors duration-300 hover:bg-white;
   }
 
   .campaign-surface {
@@ -167,7 +167,7 @@ img {
   }
 
   .glass-panel {
-    @apply rounded-[1.75rem] border border-white/30 bg-white/58 backdrop-blur-xl;
+    @apply rounded-[1.75rem] border border-white/[0.30] bg-white/[0.58] backdrop-blur-xl;
   }
 
   .grid-fade {
@@ -179,7 +179,7 @@ img {
   }
 
   .nav-link {
-    @apply relative text-xs font-semibold uppercase tracking-[0.28em] text-black/65 transition-colors duration-300 hover:text-black;
+    @apply relative text-xs font-semibold uppercase tracking-[0.28em] text-black/[0.65] transition-colors duration-300 hover:text-black;
   }
 
   .nav-link::after {
@@ -210,5 +210,4 @@ img {
       radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.28), transparent 24%),
       radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.2), transparent 20%);
   }
-}
 }

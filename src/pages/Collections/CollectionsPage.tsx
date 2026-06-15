@@ -28,7 +28,7 @@ export default function CollectionsPage() {
             <h1 className="mt-5 max-w-4xl text-[4rem] leading-[0.86] sm:text-[6rem] lg:text-[8rem]">
               Shop the full MANTHAN world.
             </h1>
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-black/68 sm:text-base">
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-black/[0.68] sm:text-base">
               Browse every category through the same editorial lens: oversized type, controlled color, strong hierarchy, and product-first campaign composition.
             </p>
           </div>

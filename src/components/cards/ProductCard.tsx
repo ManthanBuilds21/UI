@@ -26,7 +26,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
         style={{ backgroundColor: product.background }}
       >
         <div className="absolute inset-0 noise-mask opacity-70" />
-        <div className="absolute left-4 top-3 font-display text-[3.7rem] uppercase leading-none text-white/55 sm:left-6 sm:top-4 sm:text-[4.8rem]">
+        <div className="absolute left-4 top-3 font-display text-[3.7rem] uppercase leading-none text-white/[0.55] sm:left-6 sm:top-4 sm:text-[4.8rem]">
           {product.ghostText}
         </div>
 
@@ -63,7 +63,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
           <span className="text-sm font-semibold">{formatPrice(product.price)}</span>
         </div>
 
-        <p className="text-sm leading-7 text-black/68">{product.shortDescription}</p>
+        <p className="text-sm leading-7 text-black/[0.68]">{product.shortDescription}</p>
 
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link to={`/product/${product.slug}`} className="button-primary flex-1">

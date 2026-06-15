@@ -23,7 +23,7 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
     <AnimatePresence>
       {product ? (
         <motion.div
-          className="fixed inset-0 z-[140] flex items-center justify-center bg-black/45 px-4 py-8 backdrop-blur-sm"
+          className="fixed inset-0 z-[140] flex items-center justify-center bg-black/[0.45] px-4 py-8 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -41,7 +41,7 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
               className="relative flex min-h-[340px] items-end justify-center overflow-hidden p-6 sm:p-10"
               style={{ backgroundColor: product.background }}
             >
-              <div className="ghost-label absolute left-6 top-8 text-black/18">
+              <div className="ghost-label absolute left-6 top-8 text-black/[0.18]">
                 {product.ghostText}
               </div>
               <img
@@ -68,9 +68,9 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
                 </button>
               </div>
 
-              <p className="mt-3 text-sm text-black/55">{product.badge}</p>
+              <p className="mt-3 text-sm text-black/[0.55]">{product.badge}</p>
               <p className="mt-6 text-xl font-semibold">{formatPrice(product.price)}</p>
-              <p className="mt-5 text-sm leading-7 text-black/68">{product.description}</p>
+              <p className="mt-5 text-sm leading-7 text-black/[0.68]">{product.description}</p>
 
               <div className="mt-8 flex flex-wrap gap-3">
                 {product.sizes.map((size) => {
@@ -84,7 +84,7 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
                       className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] transition-colors ${
                         active
                           ? 'bg-black text-white'
-                          : 'border border-black/12 bg-black/[0.03] text-black/72 hover:text-black'
+                          : 'border border-black/[0.12] bg-black/[0.03] text-black/[0.72] hover:text-black'
                       }`}
                     >
                       {size}

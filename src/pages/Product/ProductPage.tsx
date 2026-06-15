@@ -39,7 +39,7 @@ export default function ProductPage() {
                 className={`overflow-hidden rounded-[1.5rem] border p-2 transition-colors ${
                   selectedImage === index
                     ? 'border-black bg-black/[0.03]'
-                    : 'border-black/8 bg-white'
+                    : 'border-black/[0.08] bg-white'
                 }`}
               >
                 <img
@@ -55,7 +55,7 @@ export default function ProductPage() {
             className="campaign-surface group order-1 min-h-[540px] overflow-hidden p-6 sm:p-8 lg:order-2"
             style={{ backgroundColor: product.background }}
           >
-            <div className="ghost-label absolute left-4 top-5 text-white/48 sm:left-6">
+            <div className="ghost-label absolute left-4 top-5 text-white/[0.48] sm:left-6">
               {product.ghostText}
             </div>
             <div className="relative flex min-h-[520px] items-end justify-center">
@@ -81,7 +81,7 @@ export default function ProductPage() {
             <span className="text-2xl font-semibold">{formatPrice(product.price)}</span>
           </div>
 
-          <p className="mt-6 max-w-xl text-sm leading-7 text-black/68 sm:text-base">
+          <p className="mt-6 max-w-xl text-sm leading-7 text-black/[0.68] sm:text-base">
             {product.description}
           </p>
 
@@ -125,7 +125,7 @@ export default function ProductPage() {
               className={`flex items-center justify-center rounded-full border px-5 py-4 text-xs font-semibold uppercase tracking-[0.24em] transition-colors ${
                 isWishlisted(product.id)
                   ? 'border-black bg-black text-white'
-                  : 'border-black/10 bg-white text-black/72 hover:text-black'
+                  : 'border-black/10 bg-white text-black/[0.72] hover:text-black'
               }`}
             >
               <Heart className={`mr-2 h-4 w-4 ${isWishlisted(product.id) ? 'fill-current' : ''}`} />
@@ -137,11 +137,11 @@ export default function ProductPage() {
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <p className="eyebrow">Fit</p>
-                <p className="mt-3 text-sm leading-7 text-black/72">{product.fit}</p>
+                <p className="mt-3 text-sm leading-7 text-black/[0.72]">{product.fit}</p>
               </div>
               <div>
                 <p className="eyebrow">Material</p>
-                <p className="mt-3 text-sm leading-7 text-black/72">{product.material}</p>
+                <p className="mt-3 text-sm leading-7 text-black/[0.72]">{product.material}</p>
               </div>
             </div>
 
@@ -151,7 +151,7 @@ export default function ProductPage() {
                 {product.features.map((feature) => (
                   <span
                     key={feature}
-                    className="rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-black/65"
+                    className="rounded-full border border-black/10 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-black/[0.65]"
                   >
                     {feature}
                   </span>
@@ -162,14 +162,14 @@ export default function ProductPage() {
             <div className="grid gap-3 sm:grid-cols-3">
               {shippingHighlights.map((highlight) => (
                 <div key={highlight} className="rounded-[1.4rem] bg-white p-4">
-                  <Truck className="h-4 w-4 text-black/55" />
+                  <Truck className="h-4 w-4 text-black/[0.55]" />
                   <p className="mt-3 text-sm leading-7 text-black/70">{highlight}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center gap-4 text-xs font-semibold uppercase tracking-[0.24em] text-black/52">
+          <div className="mt-8 flex flex-wrap items-center gap-4 text-xs font-semibold uppercase tracking-[0.24em] text-black/[0.52]">
             <span>Colors: {product.colors.join(' / ')}</span>
             <Link to="/collections" className="text-black">
               Back to collections

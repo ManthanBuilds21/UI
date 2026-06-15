@@ -24,7 +24,7 @@ export default function BestSellersSection() {
           className="campaign-surface flex min-h-[620px] flex-col justify-between p-6 sm:p-8 lg:p-10"
           style={{ backgroundColor: spotlightProduct.background }}
         >
-          <div className="ghost-label absolute left-4 top-5 text-white/45 sm:left-6">
+          <div className="ghost-label absolute left-4 top-5 text-white/[0.45] sm:left-6">
             {spotlightProduct.ghostText}
           </div>
           <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
@@ -34,7 +34,7 @@ export default function BestSellersSection() {
                 {spotlightProduct.name}
               </h3>
             </div>
-            <span className="rounded-full border border-white/25 bg-white/12 px-4 py-3 text-xs font-semibold uppercase tracking-[0.24em] text-white">
+            <span className="rounded-full border border-white/25 bg-white/[0.12] px-4 py-3 text-xs font-semibold uppercase tracking-[0.24em] text-white">
               {formatPrice(spotlightProduct.price)}
             </span>
           </div>
@@ -49,7 +49,7 @@ export default function BestSellersSection() {
           </div>
 
           <div className="glass-panel relative z-10 flex flex-col gap-4 p-5 sm:flex-row sm:items-end sm:justify-between">
-            <p className="max-w-lg text-sm leading-7 text-black/68">
+            <p className="max-w-lg text-sm leading-7 text-black/[0.68]">
               {spotlightProduct.story}
             </p>
             <Link to={`/product/${spotlightProduct.slug}`} className="button-primary">
@@ -77,10 +77,10 @@ export default function BestSellersSection() {
                     <h3 className="mt-3 text-[2.2rem] leading-[0.92] text-white">{product.name}</h3>
                   </div>
                   <div className="flex flex-wrap items-center justify-between gap-4">
-                    <p className="max-w-md text-sm leading-7 text-white/78">{product.shortDescription}</p>
+                    <p className="max-w-md text-sm leading-7 text-white/[0.78]">{product.shortDescription}</p>
                     <Link
                       to={`/product/${product.slug}`}
-                      className="rounded-full border border-white/28 bg-white/12 px-4 py-3 text-xs font-semibold uppercase tracking-[0.24em] text-white backdrop-blur"
+                      className="rounded-full border border-white/[0.28] bg-white/[0.12] px-4 py-3 text-xs font-semibold uppercase tracking-[0.24em] text-white backdrop-blur"
                     >
                       {formatPrice(product.price)}
                     </Link>

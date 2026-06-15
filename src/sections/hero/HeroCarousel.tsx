@@ -55,7 +55,7 @@ export default function HeroCarousel() {
                   <h1 className="mt-5 max-w-md text-[4.4rem] leading-[0.86] text-white sm:text-[6rem] lg:text-[7.8rem]">
                     {HERO_TITLES[activeIndex]}
                   </h1>
-                  <p className="mt-5 max-w-md text-sm leading-7 text-white/78 sm:text-base">
+                  <p className="mt-5 max-w-md text-sm leading-7 text-white/[0.78] sm:text-base">
                     {activeCollection.description}
                   </p>
                 </motion.div>
@@ -68,7 +68,7 @@ export default function HeroCarousel() {
               </Link>
               <Link
                 to={`/product/${featuredProduct.slug}`}
-                className="button-secondary border-white/35 bg-white/14 text-white hover:bg-white/22"
+                className="button-secondary border-white/[0.35] bg-white/[0.14] text-white hover:bg-white/[0.22]"
               >
                 View Product
               </Link>
@@ -99,7 +99,7 @@ export default function HeroCarousel() {
               <h2 className="mt-4 text-[2rem] leading-[0.92] sm:text-[2.6rem]">
                 {featuredProduct.name}
               </h2>
-              <p className="mt-4 text-sm leading-7 text-black/68">
+              <p className="mt-4 text-sm leading-7 text-black/[0.68]">
                 {featuredProduct.shortDescription}
               </p>
             </div>
@@ -109,7 +109,7 @@ export default function HeroCarousel() {
                 <button
                   type="button"
                   onClick={() => goTo('prev')}
-                  className="flex h-14 w-14 items-center justify-center rounded-full border border-white/30 bg-white/12 text-white backdrop-blur transition-transform duration-300 hover:scale-105"
+                  className="flex h-14 w-14 items-center justify-center rounded-full border border-white/30 bg-white/[0.12] text-white backdrop-blur transition-transform duration-300 hover:scale-105"
                   aria-label="Previous slide"
                 >
                   <ArrowLeft className="h-5 w-5" />
@@ -117,7 +117,7 @@ export default function HeroCarousel() {
                 <button
                   type="button"
                   onClick={() => goTo('next')}
-                  className="flex h-14 w-14 items-center justify-center rounded-full border border-white/30 bg-white/12 text-white backdrop-blur transition-transform duration-300 hover:scale-105"
+                  className="flex h-14 w-14 items-center justify-center rounded-full border border-white/30 bg-white/[0.12] text-white backdrop-blur transition-transform duration-300 hover:scale-105"
                   aria-label="Next slide"
                 >
                   <ArrowRight className="h-5 w-5" />
@@ -125,7 +125,7 @@ export default function HeroCarousel() {
               </div>
 
               <div className="w-full max-w-[200px]">
-                <div className="mb-3 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.24em] text-white/65">
+                <div className="mb-3 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.24em] text-white/[0.65]">
                   <span>{activeCollection.name}</span>
                   <span>
                     {String(activeIndex + 1).padStart(2, '0')} / {String(collections.length).padStart(2, '0')}
