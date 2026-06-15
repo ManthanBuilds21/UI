@@ -5,10 +5,12 @@ import { Link, NavLink } from 'react-router-dom'
 import { useStore } from '../../hooks/useStore'
 
 const navigationLinks = [
-  { to: '/', label: 'Home' },
+  { to: '/', label: 'Entry' },
+  { to: '/website', label: 'Home' },
   { to: '/collections', label: 'Collections' },
   { to: '/about', label: 'About' },
   { to: '/cart', label: 'Cart' },
+  { to: '/admin', label: 'Admin' },
 ]
 
 export default function Navbar() {
@@ -20,7 +22,7 @@ export default function Navbar() {
       <header className="page-shell fixed inset-x-0 top-0 z-[110] pt-4 sm:pt-6">
         <div className="section-frame">
           <div className="flex items-center justify-between rounded-full border border-black/10 bg-white/[0.72] px-4 py-3 shadow-[0_10px_32px_rgba(17,17,17,0.08)] backdrop-blur-xl sm:px-6">
-            <Link to="/" className="font-display text-[1.65rem] leading-none text-black">
+            <Link to="/website" className="font-display text-[1.65rem] leading-none text-black">
               MANTHAN
             </Link>
 
