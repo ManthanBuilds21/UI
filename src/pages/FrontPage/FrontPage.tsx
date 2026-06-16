@@ -192,7 +192,7 @@ export default function FrontPage() {
           className="absolute top-6 left-4 text-xs font-semibold uppercase sm:left-8"
           style={{ zIndex: 60, color: '#ffffff', opacity: 0.9, letterSpacing: '0.18em' }}
         >
-          TOONHUB
+          OUR COLLECTION
         </div>
 
         <div
@@ -400,7 +400,7 @@ export default function FrontPage() {
             className="mb-2 text-base font-bold uppercase tracking-widest sm:mb-3 sm:text-[22px]"
             style={{ color: '#ffffff', opacity: 0.95, letterSpacing: '0.02em' }}
           >
-            MANTHAN Clothing
+            OUR Clothing
           </p>
           <p
             className="mb-4 hidden text-xs sm:mb-5 sm:block sm:text-sm"
