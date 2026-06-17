@@ -96,7 +96,9 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <button
                   type="button"
-                  onClick={() => addToCart(product.id, selectedSize, 1)}
+                  onClick={() =>
+                    void addToCart(product.id, selectedSize || product.sizes[0] || '', 1)
+                  }
                   className="button-primary"
                 >
                   Add to cart

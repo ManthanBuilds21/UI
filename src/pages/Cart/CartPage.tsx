@@ -2,12 +2,13 @@ import { ArrowRight, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import QuantitySelector from '../../components/ui/QuantitySelector'
 import Reveal from '../../components/ui/Reveal'
-import { products } from '../../data/catalog'
+import { useCatalog } from '../../hooks/useCatalog'
 import { useStore } from '../../hooks/useStore'
 import { formatPrice } from '../../utils/format'
 
 export default function CartPage() {
-  const { cart, subtotal, updateCartItem, removeCartItem } = useStore()
+  const { products, isLoading: isCatalogLoading } = useCatalog()
+  const { cart, subtotal, updateCartItem, removeCartItem, checkout, isMutating } = useStore()
   const shipping = cart.length === 0 || subtotal >= 180 ? 0 : 18
   const total = subtotal + shipping
 
@@ -19,6 +20,10 @@ export default function CartPage() {
       return { item, product }
     })
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+
+  if (cart.length > 0 && cartLines.length === 0 && isCatalogLoading) {
+    return null
+  }
 
   return (
     <div className="page-shell pb-8">
@@ -74,11 +79,11 @@ export default function CartPage() {
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <QuantitySelector
                         value={item.quantity}
-                        onChange={(value) => updateCartItem(item.productId, item.size, value)}
+                        onChange={(value) => void updateCartItem(item.productId, item.size, value)}
                       />
                       <button
                         type="button"
-                        onClick={() => removeCartItem(item.productId, item.size)}
+                        onClick={() => void removeCartItem(item.productId, item.size)}
                         className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-black/[0.52]"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -110,12 +115,23 @@ export default function CartPage() {
               </div>
             </div>
 
-            <button type="button" className="button-primary mt-8 w-full justify-center bg-white text-black">
+            <button
+              type="button"
+              onClick={async () => {
+                const order = await checkout()
+
+                if (order) {
+                  window.alert(`Order ${order.id} created successfully.`)
+                }
+              }}
+              disabled={isMutating}
+              className="button-primary mt-8 w-full justify-center bg-white text-black"
+            >
               Proceed to checkout
             </button>
 
             <p className="mt-5 text-sm leading-7 text-white/[0.62]">
-              UI-only checkout state designed to demonstrate hierarchy, spacing, and premium interaction styling.
+              Checkout now creates a real order for your account and clears the saved cart after purchase.
             </p>
           </Reveal>
         </div>

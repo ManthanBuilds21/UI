@@ -37,7 +37,7 @@ export default function Navbar() {
                 >
                   {item.label}
                 </NavLink>
-              ))}
+                ))}
             </nav>
 
             <div className="hidden items-center gap-3 lg:flex">

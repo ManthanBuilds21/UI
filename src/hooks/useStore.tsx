@@ -1,99 +1,182 @@
 import {
   createContext,
   useContext,
+  useEffect,
+  useMemo,
   useState,
   type PropsWithChildren,
 } from 'react'
-import { products } from '../data/catalog'
-
-interface CartItem {
-  productId: string
-  size: string
-  quantity: number
-}
+import {
+  addCartItem,
+  ApiError,
+  checkoutRequest,
+  getStore,
+  removeCartItemRequest,
+  toggleWishlistRequest,
+  updateCartItemRequest,
+} from '../lib/api'
+import { useAuth } from './useAuth'
+import type { CartItem, CheckoutOrder, StoreSnapshot } from '../types/api'
 
 interface StoreContextValue {
   cart: CartItem[]
   wishlist: string[]
   cartCount: number
   subtotal: number
-  addToCart: (productId: string, size: string, quantity: number) => void
-  updateCartItem: (productId: string, size: string, quantity: number) => void
-  removeCartItem: (productId: string, size: string) => void
-  toggleWishlist: (productId: string) => void
+  isLoading: boolean
+  isMutating: boolean
+  addToCart: (productId: string, size: string, quantity: number) => Promise<boolean>
+  updateCartItem: (productId: string, size: string, quantity: number) => Promise<boolean>
+  removeCartItem: (productId: string, size: string) => Promise<boolean>
+  toggleWishlist: (productId: string) => Promise<boolean>
   isWishlisted: (productId: string) => boolean
+  checkout: () => Promise<CheckoutOrder | null>
 }
 
 const StoreContext = createContext<StoreContextValue | undefined>(undefined)
 
+const emptyStore: StoreSnapshot = {
+  cart: [],
+  wishlist: [],
+  cartCount: 0,
+  subtotal: 0,
+}
+
 export function StoreProvider({ children }: PropsWithChildren) {
-  const [cart, setCart] = useState<CartItem[]>([])
-  const [wishlist, setWishlist] = useState<string[]>([])
+  const { logout, session, isReady } = useAuth()
+  const [store, setStore] = useState<StoreSnapshot>(emptyStore)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isMutating, setIsMutating] = useState(false)
 
-  const addToCart = (productId: string, size: string, quantity: number) => {
-    setCart((current) => {
-      const existing = current.find(
-        (item) => item.productId === productId && item.size === size,
-      )
-
-      if (!existing) {
-        return [...current, { productId, size, quantity }]
-      }
-
-      return current.map((item) =>
-        item.productId === productId && item.size === size
-          ? { ...item, quantity: item.quantity + quantity }
-          : item,
-      )
-    })
-  }
-
-  const updateCartItem = (productId: string, size: string, quantity: number) => {
-    if (quantity <= 0) {
-      setCart((current) =>
-        current.filter((item) => !(item.productId === productId && item.size === size)),
-      )
+  useEffect(() => {
+    if (!isReady) {
       return
     }
 
-    setCart((current) =>
-      current.map((item) =>
-        item.productId === productId && item.size === size ? { ...item, quantity } : item,
-      ),
-    )
+    if (!session) {
+      setStore(emptyStore)
+      setIsLoading(false)
+      return
+    }
+
+    setIsLoading(true)
+
+    void getStore(session.token)
+      .then((snapshot) => {
+        setStore(snapshot)
+      })
+      .catch((error) => {
+        console.error(error)
+
+        if (error instanceof ApiError && error.status === 401) {
+          logout()
+        }
+
+        setStore(emptyStore)
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }, [isReady, logout, session])
+
+  const requireToken = (message: string) => {
+    if (!session?.token) {
+      window.alert(message)
+      return null
+    }
+
+    return session.token
   }
 
-  const removeCartItem = (productId: string, size: string) => {
-    setCart((current) =>
-      current.filter((item) => !(item.productId === productId && item.size === size)),
-    )
+  const handleMutationError = (error: unknown, fallbackMessage: string) => {
+    console.error(error)
+
+    if (error instanceof ApiError && error.status === 401) {
+      logout()
+      window.alert('Your session expired. Please log in again.')
+      return
+    }
+
+    window.alert(fallbackMessage)
   }
 
-  const toggleWishlist = (productId: string) => {
-    setWishlist((current) =>
-      current.includes(productId)
-        ? current.filter((id) => id !== productId)
-        : [...current, productId],
-    )
-  }
+  const value = useMemo<StoreContextValue>(() => {
+    const runMutation = async (
+      message: string,
+      fallbackMessage: string,
+      action: (token: string) => Promise<StoreSnapshot>,
+    ) => {
+      const token = requireToken(message)
 
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
-  const subtotal = cart.reduce((sum, item) => {
-    const product = products.find((entry) => entry.id === item.productId)
-    return sum + (product ? product.price * item.quantity : 0)
-  }, 0)
+      if (!token) {
+        return false
+      }
 
-  const value: StoreContextValue = {
-    cart,
-    wishlist,
-    cartCount,
-    subtotal,
-    addToCart,
-    updateCartItem,
-    removeCartItem,
-    toggleWishlist,
-    isWishlisted: (productId: string) => wishlist.includes(productId),
-  }
+      setIsMutating(true)
+
+      try {
+        const nextStore = await action(token)
+        setStore(nextStore)
+        return true
+      } catch (error) {
+        handleMutationError(error, fallbackMessage)
+        return false
+      } finally {
+        setIsMutating(false)
+      }
+    }
+
+    return {
+      ...store,
+      isLoading,
+      isMutating,
+      addToCart: (productId, size, quantity) =>
+        runMutation(
+          'Please log in to save products to your cart.',
+          'We could not update your cart right now.',
+          (token) => addCartItem(token, { productId, size, quantity }),
+        ),
+      updateCartItem: (productId, size, quantity) =>
+        runMutation(
+          'Please log in to update your cart.',
+          'We could not update your cart right now.',
+          (token) => updateCartItemRequest(token, { productId, size, quantity }),
+        ),
+      removeCartItem: (productId, size) =>
+        runMutation(
+          'Please log in to update your cart.',
+          'We could not remove that cart item right now.',
+          (token) => removeCartItemRequest(token, { productId, size }),
+        ),
+      toggleWishlist: (productId) =>
+        runMutation(
+          'Please log in to save products to your wishlist.',
+          'We could not update your wishlist right now.',
+          (token) => toggleWishlistRequest(token, { productId }),
+        ),
+      isWishlisted: (productId) => store.wishlist.includes(productId),
+      checkout: async () => {
+        const token = requireToken('Please log in before checking out.')
+
+        if (!token) {
+          return null
+        }
+
+        setIsMutating(true)
+
+        try {
+          const response = await checkoutRequest(token)
+          setStore(response.store)
+          return response.order
+        } catch (error) {
+          handleMutationError(error, 'We could not complete checkout right now.')
+          return null
+        } finally {
+          setIsMutating(false)
+        }
+      },
+    }
+  }, [isLoading, isMutating, logout, session, store])
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
 }

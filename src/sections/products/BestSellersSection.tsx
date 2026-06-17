@@ -2,13 +2,20 @@ import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Reveal from '../../components/ui/Reveal'
 import SectionHeading from '../../components/ui/SectionHeading'
-import { products } from '../../data/catalog'
+import { useCatalog } from '../../hooks/useCatalog'
 import { formatPrice } from '../../utils/format'
 
-const spotlightProduct = products[3]
-const supportingProducts = [products[4], products[7], products[5]]
-
 export default function BestSellersSection() {
+  const { products } = useCatalog()
+  const spotlightProduct = products[3]
+  const supportingProducts = [products[4], products[7], products[5]].filter(
+    (product): product is NonNullable<typeof product> => Boolean(product),
+  )
+
+  if (!spotlightProduct) {
+    return null
+  }
+
   return (
     <section className="page-shell py-10 sm:py-14">
       <Reveal className="section-frame">

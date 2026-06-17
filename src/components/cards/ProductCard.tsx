@@ -36,7 +36,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
           </span>
           <button
             type="button"
-            onClick={() => toggleWishlist(product.id)}
+            onClick={() => void toggleWishlist(product.id)}
             className="rounded-full border border-black/10 bg-white/70 p-3 text-black/70 backdrop-blur transition-colors hover:text-black"
             aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
           >

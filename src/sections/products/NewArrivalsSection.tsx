@@ -3,13 +3,13 @@ import ProductCard from '../../components/cards/ProductCard'
 import QuickViewModal from '../../components/ui/QuickViewModal'
 import Reveal, { staggerContainer } from '../../components/ui/Reveal'
 import SectionHeading from '../../components/ui/SectionHeading'
-import { products } from '../../data/catalog'
+import { useCatalog } from '../../hooks/useCatalog'
 import type { Product } from '../../types/catalog'
 
-const arrivals = products.slice(0, 4)
-
 export default function NewArrivalsSection() {
+  const { products } = useCatalog()
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
+  const arrivals = products.slice(0, 4)
 
   return (
     <section className="page-shell py-10 sm:py-14">

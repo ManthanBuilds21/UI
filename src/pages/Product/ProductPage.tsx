@@ -4,27 +4,60 @@ import { Link, useParams } from 'react-router-dom'
 import ProductCard from '../../components/cards/ProductCard'
 import QuantitySelector from '../../components/ui/QuantitySelector'
 import Reveal from '../../components/ui/Reveal'
-import { getProductBySlug, products, shippingHighlights } from '../../data/catalog'
+import { shippingHighlights } from '../../data/catalog'
+import { getProductBySlug as getProductBySlugRequest } from '../../lib/api'
+import { useCatalog } from '../../hooks/useCatalog'
 import { useStore } from '../../hooks/useStore'
+import type { Product } from '../../types/catalog'
 import { formatPrice } from '../../utils/format'
 
 export default function ProductPage() {
   const { slug = '' } = useParams()
-  const product = getProductBySlug(slug) ?? products[0]
+  const { products } = useCatalog()
   const { addToCart, isWishlisted, toggleWishlist } = useStore()
+  const [product, setProduct] = useState<Product | null>(null)
   const [selectedImage, setSelectedImage] = useState(0)
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0] ?? '')
+  const [selectedSize, setSelectedSize] = useState('')
   const [quantity, setQuantity] = useState(1)
 
   useEffect(() => {
+    let isMounted = true
+
+    void getProductBySlugRequest(slug)
+      .then((nextProduct) => {
+        if (isMounted) {
+          setProduct(nextProduct)
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setProduct(products[0] ?? null)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [products, slug])
+
+  useEffect(() => {
+    if (!product) {
+      return
+    }
+
     setSelectedImage(0)
     setSelectedSize(product.sizes[0] ?? '')
     setQuantity(1)
   }, [product])
 
+  if (!product) {
+    return null
+  }
+
   const relatedProducts = products
     .filter((entry) => entry.slug !== product.slug && entry.collection === product.collection)
     .slice(0, 3)
+  const activeSize = selectedSize || product.sizes[0] || ''
 
   return (
     <div className="page-shell pb-8">
@@ -113,7 +146,7 @@ export default function ProductPage() {
             <QuantitySelector value={quantity} onChange={setQuantity} />
             <button
               type="button"
-              onClick={() => addToCart(product.id, selectedSize, quantity)}
+              onClick={() => void addToCart(product.id, activeSize, quantity)}
               className="button-primary flex-1"
             >
               <ShoppingBag className="mr-2 h-4 w-4" />
@@ -121,7 +154,7 @@ export default function ProductPage() {
             </button>
             <button
               type="button"
-              onClick={() => toggleWishlist(product.id)}
+              onClick={() => void toggleWishlist(product.id)}
               className={`flex items-center justify-center rounded-full border px-5 py-4 text-xs font-semibold uppercase tracking-[0.24em] transition-colors ${
                 isWishlisted(product.id)
                   ? 'border-black bg-black text-white'

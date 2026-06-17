@@ -1,28 +1,65 @@
 import { ShieldCheck, ShoppingBag, Users, WandSparkles } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import Reveal from '../../components/ui/Reveal'
+import { ApiError, getAdminDashboard } from '../../lib/api'
+import { useAuth } from '../../hooks/useAuth'
+import type { AdminDashboard } from '../../types/api'
+import { formatPrice } from '../../utils/format'
 
-const adminCards = [
-  {
-    title: 'Orders',
-    value: '128',
-    description: 'Pending fulfillment across the latest drop.',
-    icon: ShoppingBag,
-  },
-  {
-    title: 'Users',
-    value: '2.4k',
-    description: 'Active customer accounts inside the storefront.',
-    icon: Users,
-  },
-  {
-    title: 'Campaigns',
-    value: '08',
-    description: 'Scheduled visual stories ready for release.',
-    icon: WandSparkles,
-  },
-]
+const initialDashboard: AdminDashboard = {
+  orderCount: 0,
+  userCount: 0,
+  collectionCount: 0,
+  orders: [],
+}
 
 export default function AdminPreviewPage() {
+  const { token } = useAuth()
+  const [dashboard, setDashboard] = useState<AdminDashboard>(initialDashboard)
+
+  useEffect(() => {
+    if (!token) {
+      return
+    }
+
+    void getAdminDashboard(token)
+      .then((nextDashboard) => {
+        setDashboard(nextDashboard)
+      })
+      .catch((error) => {
+        console.error(error)
+        window.alert(
+          error instanceof ApiError
+            ? error.message
+            : 'We could not load the admin dashboard right now.',
+        )
+      })
+  }, [token])
+
+  const adminCards = useMemo(
+    () => [
+      {
+        title: 'Orders',
+        value: String(dashboard.orderCount),
+        description: 'Live order volume across the current storefront.',
+        icon: ShoppingBag,
+      },
+      {
+        title: 'Users',
+        value: String(dashboard.userCount),
+        description: 'Registered customer accounts in the database.',
+        icon: Users,
+      },
+      {
+        title: 'Campaigns',
+        value: String(dashboard.collectionCount).padStart(2, '0'),
+        description: 'Collections currently driving the storefront catalog.',
+        icon: WandSparkles,
+      },
+    ],
+    [dashboard.collectionCount, dashboard.orderCount, dashboard.userCount],
+  )
+
   return (
     <div className="page-shell pb-8">
       <Reveal
@@ -66,13 +103,44 @@ export default function AdminPreviewPage() {
       </div>
 
       <Reveal className="section-frame mt-10 campaign-surface bg-[var(--beige)] p-6 sm:p-8">
-        <p className="eyebrow">Note</p>
+        <p className="eyebrow">Recent Orders</p>
         <h2 className="mt-4 text-[2.8rem] leading-[0.92] sm:text-[4rem]">
-          This is a UI-only admin destination.
+          Live storefront orders now flow into the admin view.
         </h2>
-        <p className="mt-4 max-w-3xl text-sm leading-7 text-black/[0.68] sm:text-base">
-          The front page now has separate sign up and login entry points for both users and admins. The admin route is intentionally a preview interface so the flow feels complete without requiring backend auth.
-        </p>
+        {dashboard.orders.length === 0 ? (
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-black/[0.68] sm:text-base">
+            Orders placed from the cart will appear here automatically once checkout is completed.
+          </p>
+        ) : (
+          <div className="mt-8 grid gap-4">
+            {dashboard.orders.map((order) => (
+              <article key={order.id} className="rounded-[1.6rem] bg-white/80 p-5">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div>
+                    <p className="eyebrow">{order.customerEmail}</p>
+                    <h3 className="mt-3 text-[1.8rem] leading-[0.92]">{order.customerName}</h3>
+                    <p className="mt-3 text-sm leading-7 text-black/[0.68]">
+                      {order.items
+                        .map((item) => `${item.productName} x${item.quantity} (${item.size})`)
+                        .join(' / ')}
+                    </p>
+                  </div>
+                  <div className="text-left lg:text-right">
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-black/[0.5]">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </p>
+                    <p className="mt-3 text-2xl font-semibold text-black">
+                      {formatPrice(order.total)}
+                    </p>
+                    <p className="mt-2 text-sm text-black/[0.62]">
+                      {order.itemCount} item{order.itemCount === 1 ? '' : 's'} / {order.status}
+                    </p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </Reveal>
     </div>
   )

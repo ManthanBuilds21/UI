@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import Reveal from '../components/ui/Reveal'
+import { ApiError, subscribeToNewsletter } from '../lib/api'
 
 export default function NewsletterSection() {
   const [email, setEmail] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   return (
     <section className="page-shell py-10 sm:py-14">
@@ -22,7 +24,22 @@ export default function NewsletterSection() {
             className="glass-panel flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:p-5"
             onSubmit={(event) => {
               event.preventDefault()
-              setEmail('')
+              setIsSubmitting(true)
+
+              void subscribeToNewsletter(email)
+                .then(() => {
+                  setEmail('')
+                })
+                .catch((error) => {
+                  window.alert(
+                    error instanceof ApiError
+                      ? error.message
+                      : 'We could not save your subscription right now.',
+                  )
+                })
+                .finally(() => {
+                  setIsSubmitting(false)
+                })
             }}
           >
             <input
@@ -32,7 +49,7 @@ export default function NewsletterSection() {
               placeholder="Email address"
               className="w-full rounded-full border border-black/10 bg-white px-5 py-4 text-sm text-black outline-none placeholder:text-black/40"
             />
-            <button type="submit" className="button-primary whitespace-nowrap">
+            <button type="submit" disabled={isSubmitting} className="button-primary whitespace-nowrap">
               Subscribe
             </button>
           </form>

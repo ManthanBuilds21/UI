@@ -1,9 +1,11 @@
 import CollectionCard from '../../components/cards/CollectionCard'
 import Reveal, { staggerContainer } from '../../components/ui/Reveal'
 import SectionHeading from '../../components/ui/SectionHeading'
-import { collections } from '../../data/catalog'
+import { useCatalog } from '../../hooks/useCatalog'
 
 export default function FeaturedCollectionsSection() {
+  const { collections } = useCatalog()
+
   return (
     <section className="page-shell py-10 sm:py-14">
       <Reveal className="section-frame">

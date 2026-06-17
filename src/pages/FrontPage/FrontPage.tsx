@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState, type CSSProperties, type FormEvent } 
 import { ArrowLeft, ArrowRight, ShieldCheck, UserRound, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import { ApiError } from '../../lib/api'
+import { useAuth } from '../../hooks/useAuth'
 
 interface FigurineImage {
   src: string
@@ -90,6 +92,7 @@ function getRoleStyle(role: CarouselRole, isMobile: boolean): CSSProperties {
 
 export default function FrontPage() {
   const navigate = useNavigate()
+  const { login, signup } = useAuth()
   const [activeIndex, setActiveIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
   const [isMobile, setIsMobile] = useState(
@@ -104,6 +107,7 @@ export default function FrontPage() {
     password: '',
     confirmPassword: '',
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     IMAGES.forEach((image) => {
@@ -130,10 +134,47 @@ export default function FrontPage() {
     [isAnimating],
   )
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setAuthOpen(false)
-    navigate(authRole === 'admin' ? '/admin' : '/website')
+
+    if (authMode === 'signup' && formState.password !== formState.confirmPassword) {
+      window.alert('Passwords do not match.')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      if (authMode === 'login') {
+        await login({
+          email: formState.email,
+          password: formState.password,
+          role: authRole,
+        })
+      } else {
+        await signup({
+          name: formState.name,
+          email: formState.email,
+          password: formState.password,
+          role: authRole,
+        })
+      }
+
+      setAuthOpen(false)
+      setFormState({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+      })
+      navigate(authRole === 'admin' ? '/admin' : '/website')
+    } catch (error) {
+      window.alert(
+        error instanceof ApiError ? error.message : 'We could not complete authentication.',
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const center = activeIndex
@@ -344,9 +385,12 @@ export default function FrontPage() {
                   ) : null}
                   <button
                     type="submit"
+                    disabled={isSubmitting}
                     className="mt-1 rounded-full bg-white px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-black transition-[transform,opacity] duration-150 hover:scale-[1.02]"
                   >
-                    {authMode === 'login'
+                    {isSubmitting
+                      ? 'Please Wait'
+                      : authMode === 'login'
                       ? authRole === 'admin'
                         ? 'Admin Login'
                         : 'Continue'

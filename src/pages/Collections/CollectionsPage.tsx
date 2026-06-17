@@ -3,10 +3,11 @@ import ProductCard from '../../components/cards/ProductCard'
 import QuickViewModal from '../../components/ui/QuickViewModal'
 import PillTabs from '../../components/ui/PillTabs'
 import Reveal, { staggerContainer } from '../../components/ui/Reveal'
-import { categories, collections, products } from '../../data/catalog'
+import { useCatalog } from '../../hooks/useCatalog'
 import type { FilterCategory, Product } from '../../types/catalog'
 
 export default function CollectionsPage() {
+  const { categories, collections, products } = useCatalog()
   const [activeCategory, setActiveCategory] = useState<FilterCategory>('All')
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
   const [isPending, startTransition] = useTransition()

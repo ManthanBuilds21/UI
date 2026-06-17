@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { collections, getProductBySlug } from '../../data/catalog'
+import { useCatalog } from '../../hooks/useCatalog'
 
 const HERO_TITLES = [
   'Built For The Streets',
@@ -12,17 +12,30 @@ const HERO_TITLES = [
 ]
 
 export default function HeroCarousel() {
+  const { collections, products } = useCatalog()
   const [activeIndex, setActiveIndex] = useState(0)
   const activeCollection = collections[activeIndex]
-  const featuredProduct = getProductBySlug(activeCollection.productSlugs[0])
+  const featuredProduct = activeCollection
+    ? products.find((product) => product.slug === activeCollection.productSlugs[0])
+    : null
 
   useEffect(() => {
+    if (collections.length === 0) {
+      return
+    }
+
     const timer = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % collections.length)
     }, 5200)
 
     return () => window.clearInterval(timer)
-  }, [])
+  }, [collections.length])
+
+  useEffect(() => {
+    if (activeIndex >= collections.length) {
+      setActiveIndex(0)
+    }
+  }, [activeIndex, collections.length])
 
   const goTo = (direction: 'next' | 'prev') => {
     setActiveIndex((current) =>
@@ -32,7 +45,7 @@ export default function HeroCarousel() {
     )
   }
 
-  if (!featuredProduct) return null
+  if (!activeCollection || !featuredProduct) return null
 
   return (
     <section className="page-shell">
