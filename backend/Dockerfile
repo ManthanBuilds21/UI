@@ -3,6 +3,7 @@ WORKDIR /app
 
 COPY backend/package.json ./backend/package.json
 COPY backend/tsconfig.json ./backend/tsconfig.json
+COPY backend/logs ./backend/logs
 COPY backend/prisma ./backend/prisma
 COPY backend/src ./backend/src
 COPY frontend/src/data ./frontend/src/data

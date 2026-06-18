@@ -28,33 +28,35 @@ npm install
 
 2. Create your backend environment file from `backend/.env.example`.
 
-3. Configure PostgreSQL in `backend/.env`.
+3. Optional frontend override: copy `frontend/.env.example` if you want to point the UI at a non-default API URL.
 
-4. Generate Prisma client:
+4. Configure PostgreSQL in `backend/.env`.
+
+5. Generate Prisma client:
 
 ```bash
 npm run prisma:generate
 ```
 
-5. Generate and validate the SQL migration plan from the Prisma schema:
+6. Generate and validate the SQL migration plan from the Prisma schema:
 
 ```bash
 npm run prisma:migrate
 ```
 
-6. Apply the checked-in migrations to your configured database:
+7. Apply the checked-in migrations to your configured database:
 
 ```bash
 npm run prisma:deploy --workspace backend
 ```
 
-7. Seed the catalog:
+8. Seed the catalog:
 
 ```bash
 npm run seed
 ```
 
-8. Optional database utility commands:
+9. Optional database utility commands:
 
 ```bash
 npm run db:seed

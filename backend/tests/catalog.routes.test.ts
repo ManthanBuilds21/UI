@@ -69,6 +69,16 @@ describe('catalog routes', () => {
     resetMockPrisma()
   })
 
+  it('returns the production health payload', async () => {
+    const response = await request(app).get('/api/health')
+
+    expect(response.status).toBe(200)
+    expect(response.body.success).toBe(true)
+    expect(response.body.data.status).toBe('ok')
+    expect(response.body.data.version).toBe('1.0.0')
+    expect(response.body.data.timestamp).toEqual(expect.any(String))
+  })
+
   it('returns the catalog payload in the success envelope', async () => {
     mockPrisma.collection.findMany.mockResolvedValueOnce([
       {
