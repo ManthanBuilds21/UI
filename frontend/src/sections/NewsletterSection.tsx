@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Reveal from '../components/ui/Reveal'
-import { ApiError, subscribeToNewsletter } from '../lib/api'
+import { ApiError } from '../services/api'
+import { subscribeToNewsletter } from '../services/newsletter'
 
 export default function NewsletterSection() {
   const [email, setEmail] = useState('')

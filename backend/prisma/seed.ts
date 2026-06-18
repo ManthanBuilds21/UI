@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { collections, products } from '../../src/data/catalog.ts'
+import { collections, products } from '../../frontend/src/data/catalog.ts'
 
 const prisma = new PrismaClient()
 

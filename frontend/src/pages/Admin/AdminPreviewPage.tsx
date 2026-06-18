@@ -1,8 +1,9 @@
 import { ShieldCheck, ShoppingBag, Users, WandSparkles } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import Reveal from '../../components/ui/Reveal'
-import { ApiError, getAdminDashboard } from '../../lib/api'
 import { useAuth } from '../../hooks/useAuth'
+import { ApiError } from '../../services/api'
+import { getAdminDashboard } from '../../services/store'
 import type { AdminDashboard } from '../../types/api'
 import { formatPrice } from '../../utils/format'
 

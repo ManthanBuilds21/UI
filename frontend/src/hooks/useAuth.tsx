@@ -9,12 +9,10 @@ import {
 } from 'react'
 import {
   clearStoredSession,
-  getCurrentUser,
   getStoredSession,
-  login as loginRequest,
   saveStoredSession,
-  signup as signupRequest,
-} from '../lib/api'
+} from '../services/api'
+import { getCurrentUser, login as loginRequest, signup as signupRequest } from '../services/auth'
 import type { AuthSession, AuthUser } from '../types/api'
 
 interface AuthContextValue {

@@ -7,14 +7,16 @@ import {
   type PropsWithChildren,
 } from 'react'
 import {
-  addCartItem,
   ApiError,
+} from '../services/api'
+import {
+  addCartItem,
   checkoutRequest,
   getStore,
   removeCartItemRequest,
   toggleWishlistRequest,
   updateCartItemRequest,
-} from '../lib/api'
+} from '../services/store'
 import { useAuth } from './useAuth'
 import type { CartItem, CheckoutOrder, StoreSnapshot } from '../types/api'
 

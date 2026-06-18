@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, type CSSProperties, type FormEvent } 
 import { ArrowLeft, ArrowRight, ShieldCheck, UserRound, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { ApiError } from '../../lib/api'
+import { ApiError } from '../../services/api'
 import { useAuth } from '../../hooks/useAuth'
 
 interface FigurineImage {

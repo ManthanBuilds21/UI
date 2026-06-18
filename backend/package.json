@@ -1,5 +1,5 @@
 {
-  "name": "manthan-server",
+  "name": "manthan-backend",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -8,10 +8,9 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --exit-code",
+    "prisma:deploy": "prisma migrate deploy",
     "prisma:push": "prisma db push",
-    "seed": "tsx prisma/seed.ts"
-  },
-  "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {

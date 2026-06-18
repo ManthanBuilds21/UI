@@ -7,7 +7,7 @@ import {
   useState,
   type PropsWithChildren,
 } from 'react'
-import { getCatalog } from '../lib/api'
+import { getCatalog } from '../services/catalog'
 import type { CatalogResponse } from '../types/api'
 
 interface CatalogContextValue extends CatalogResponse {
