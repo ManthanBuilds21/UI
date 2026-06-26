@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion'
-import type { FilterCategory } from '../../types/catalog'
 
 interface PillTabsProps {
-  active: FilterCategory
-  items: FilterCategory[]
-  onChange: (item: FilterCategory) => void
+  active: string
+  items: string[]
+  onChange: (item: string) => void
+  layoutId?: string
 }
 
-export default function PillTabs({ active, items, onChange }: PillTabsProps) {
+export default function PillTabs({ active, items, onChange, layoutId = 'active-filter' }: PillTabsProps) {
   return (
     <div className="flex flex-wrap gap-3">
       {items.map((item) => {
@@ -24,7 +24,7 @@ export default function PillTabs({ active, items, onChange }: PillTabsProps) {
           >
             {isActive && (
               <motion.span
-                layoutId="active-filter"
+                layoutId={layoutId}
                 className="absolute inset-0 rounded-full bg-black"
                 transition={{ type: 'spring', stiffness: 220, damping: 24 }}
               />

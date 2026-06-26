@@ -121,6 +121,28 @@ router.post('/wishlist/toggle', asyncHandler(async (request, response) => {
     }
     response.json(await buildStoreSnapshot(request.auth.userId));
 }));
+const mergeCartSchema = z.object({
+    items: z.array(z.object({
+        productId: z.string().min(1),
+        size: z.string().min(1),
+        quantity: z.number().int().positive(),
+    })),
+});
+router.post('/cart/merge', asyncHandler(async (request, response) => {
+    const { items } = mergeCartSchema.parse(request.body);
+    const userId = request.auth.userId;
+    for (const item of items) {
+        const product = await prisma.product.findUnique({ where: { id: item.productId } });
+        if (!product || !product.sizes.includes(item.size))
+            continue;
+        await prisma.cartItem.upsert({
+            where: { userId_productId_size: { userId, productId: item.productId, size: item.size } },
+            update: { quantity: { increment: item.quantity } },
+            create: { userId, productId: item.productId, size: item.size, quantity: item.quantity },
+        });
+    }
+    response.json(await buildStoreSnapshot(userId));
+}));
 router.post('/checkout', asyncHandler(async (request, response) => {
     response.status(201).json(await createOrderFromCart(request.auth.userId));
 }));

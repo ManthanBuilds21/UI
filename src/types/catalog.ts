@@ -28,7 +28,7 @@ export interface Product {
   sizes: string[]
   features: string[]
   images: string[]
-  stockBySize: Record<string, number>
+  stockBySize?: Record<string, number>
 }
 
 export interface CollectionSpotlight {

@@ -9,7 +9,7 @@ import catalogRouter from './routes/catalog.js'
 import newsletterRouter from './routes/newsletter.js'
 import storeRouter from './routes/store.js'
 import adminRouter from './routes/admin.js'
-import checkoutRouter from './routes/checkout.js'
+import checkoutRouter, { webhookHandler } from './routes/checkout.js'
 import accountRouter from './routes/account.js'
 
 const app = express()
@@ -19,6 +19,10 @@ app.use(
     origin: config.clientOrigin,
   }),
 )
+
+// ── Webhook must be registered BEFORE express.json() so it receives raw Buffer
+app.post('/api/checkout/webhook', express.raw({ type: 'application/json' }), webhookHandler)
+
 app.use(express.json())
 
 app.get('/api/health', (_request, response) => {

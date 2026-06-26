@@ -1,9 +1,15 @@
 import type {
+  Address,
   AdminDashboard,
+  AdminOrder,
+  AdminOrderDetail,
+  AdminOrdersResponse,
+  AdminProduct,
   AuthSession,
   AuthUser,
   CatalogResponse,
   CheckoutOrder,
+  OrderDetail,
   StoreSnapshot,
 } from '../types/api'
 import type { Product } from '../types/catalog'
@@ -87,6 +93,8 @@ export function clearStoredSession() {
   window.localStorage.removeItem(SESSION_STORAGE_KEY)
 }
 
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+
 export async function signup(payload: {
   name: string
   email: string
@@ -118,6 +126,8 @@ export async function getCurrentUser(token: string) {
   return response.user
 }
 
+// ─── Catalog ──────────────────────────────────────────────────────────────────
+
 export async function getCatalog() {
   return request<CatalogResponse>('/catalog')
 }
@@ -129,6 +139,8 @@ export async function getProductBySlug(slug: string) {
 
   return response.product
 }
+
+// ─── Store (cart + wishlist) ──────────────────────────────────────────────────
 
 export async function getStore(token: string) {
   return request<StoreSnapshot>('/store', {
@@ -177,13 +189,6 @@ export async function toggleWishlistRequest(token: string, payload: { productId:
   })
 }
 
-export async function checkoutRequest(token: string) {
-  return request<{ order: CheckoutOrder; store: StoreSnapshot }>('/store/checkout', {
-    method: 'POST',
-    token,
-  })
-}
-
 export async function mergeGuestCart(
   token: string,
   items: Array<{ productId: string; size: string; quantity: number }>,
@@ -195,8 +200,26 @@ export async function mergeGuestCart(
   })
 }
 
-export async function saveAddressRequest(token: string, payload: any) {
-  return request<{ address: any }>('/checkout/address', {
+export async function checkoutRequest(token: string) {
+  return request<{ order: CheckoutOrder; store: StoreSnapshot }>('/store/checkout', {
+    method: 'POST',
+    token,
+  })
+}
+
+// ─── Checkout ─────────────────────────────────────────────────────────────────
+
+export async function saveAddressRequest(token: string, payload: {
+  id?: string
+  name: string
+  street: string
+  city: string
+  state: string
+  postalCode: string
+  country?: string
+  phone: string
+}) {
+  return request<{ address: Address }>('/checkout/address', {
     method: 'POST',
     token,
     body: payload,
@@ -204,14 +227,24 @@ export async function saveAddressRequest(token: string, payload: any) {
 }
 
 export async function initiateCheckoutRequest(token: string, addressId: string) {
-  return request<any>('/checkout/initiate', {
+  return request<{
+    orderId: string
+    razorpayOrderId: string
+    amount: number
+    currency: string
+    keyId: string
+  }>('/checkout/initiate', {
     method: 'POST',
     token,
     body: { addressId },
   })
 }
 
-export async function verifyCheckoutRequest(token: string, payload: any) {
+export async function verifyCheckoutRequest(token: string, payload: {
+  razorpay_order_id: string
+  razorpay_payment_id: string
+  razorpay_signature: string
+}) {
   return request<{ orderId: string }>('/checkout/verify', {
     method: 'POST',
     token,
@@ -219,19 +252,113 @@ export async function verifyCheckoutRequest(token: string, payload: any) {
   })
 }
 
+// ─── Account ──────────────────────────────────────────────────────────────────
+
 export async function getAccountOrders(token: string) {
-  return request<{ orders: any[] }>('/account/orders', { token })
+  return request<{ orders: OrderDetail[] }>('/account/orders', { token })
+}
+
+export async function getAccountOrder(token: string, id: string) {
+  return request<{ order: OrderDetail }>(`/account/orders/${id}`, { token })
 }
 
 export async function getAccountAddresses(token: string) {
-  return request<{ addresses: any[] }>('/account/addresses', { token })
+  return request<{ addresses: Address[] }>('/account/addresses', { token })
+}
+
+export async function addAccountAddress(
+  token: string,
+  payload: {
+    name: string
+    street: string
+    city: string
+    state: string
+    postalCode: string
+    country?: string
+    phone: string
+  },
+) {
+  return request<{ address: Address }>('/account/addresses', {
+    method: 'POST',
+    token,
+    body: payload,
+  })
+}
+
+export async function updateAccountAddress(
+  token: string,
+  id: string,
+  payload: {
+    name: string
+    street: string
+    city: string
+    state: string
+    postalCode: string
+    country?: string
+    phone: string
+  },
+) {
+  return request<{ address: Address }>(`/account/addresses/${id}`, {
+    method: 'PATCH',
+    token,
+    body: payload,
+  })
 }
 
 export async function deleteAccountAddress(token: string, id: string) {
-  return request<{ success: boolean }>('/account/addresses', {
+  return request<{ success: boolean }>(`/account/addresses/${id}`, {
     method: 'DELETE',
     token,
-    body: { id },
+  })
+}
+
+export async function setDefaultAddress(token: string, id: string) {
+  return request<{ addresses: Address[] }>(`/account/addresses/${id}/default`, {
+    method: 'PATCH',
+    token,
+  })
+}
+
+// ─── Admin ────────────────────────────────────────────────────────────────────
+
+export async function getAdminDashboard(token: string) {
+  return request<AdminDashboard>('/admin/dashboard', { token })
+}
+
+export async function getAdminOrders(token: string, page = 1) {
+  return request<AdminOrdersResponse>(`/admin/orders?page=${page}`, { token })
+}
+
+export async function getAdminOrder(token: string, id: string) {
+  return request<{ order: AdminOrderDetail }>(`/admin/orders/${id}`, { token })
+}
+
+export async function updateAdminOrderStatus(
+  token: string,
+  id: string,
+  status: 'CONFIRMED' | 'FULFILLED' | 'CANCELLED',
+) {
+  return request<{ order: AdminOrder }>(`/admin/orders/${id}`, {
+    method: 'PATCH',
+    token,
+    body: { status },
+  })
+}
+
+export async function getAdminProducts(token: string) {
+  return request<{ products: AdminProduct[] }>('/admin/products', { token })
+}
+
+export async function updateAdminProductStock(
+  token: string,
+  id: string,
+  size: string,
+  stock: number,
+) {
+  return request<{ product: AdminProduct }>(`/admin/products/${id}/stock`, {
+    method: 'PATCH',
+    token,
+    body: { size, stock },
   })
 }
 
@@ -242,8 +369,16 @@ export async function subscribeToNewsletter(email: string) {
   })
 }
 
-export async function getAdminDashboard(token: string) {
-  return request<AdminDashboard>('/admin/dashboard', {
-    token,
+export async function forgotPassword(email: string) {
+  return request<{ success: boolean; message: string }>('/auth/forgot-password', {
+    method: 'POST',
+    body: { email },
+  })
+}
+
+export async function resetPassword(email: string, token: string, password: string) {
+  return request<{ success: boolean; message: string }>('/auth/reset-password', {
+    method: 'POST',
+    body: { email, token, password },
   })
 }

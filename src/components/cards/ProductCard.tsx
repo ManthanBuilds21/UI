@@ -14,6 +14,10 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
   const { isWishlisted, toggleWishlist } = useStore()
   const wishlisted = isWishlisted(product.id)
 
+  const stockValues = Object.values(product.stockBySize ?? {})
+  const isSoldOut =
+    stockValues.length === 0 || stockValues.every((s) => s === 0)
+
   return (
     <motion.article
       layout
@@ -49,9 +53,18 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
             src={product.images[0]}
             alt={product.name}
             loading="lazy"
-            className="h-[280px] w-full object-contain transition-transform duration-500 group-hover:scale-[1.04] sm:h-[360px]"
+            className={`h-[280px] w-full object-contain transition-transform duration-500 group-hover:scale-[1.04] sm:h-[360px] ${isSoldOut ? 'opacity-40 grayscale' : ''}`}
           />
         </div>
+
+        {/* Sold Out overlay pill */}
+        {isSoldOut && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+            <span className="rounded-full bg-black/80 px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.28em] text-white backdrop-blur-sm">
+              Sold Out
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-6 p-5 sm:p-6">

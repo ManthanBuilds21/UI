@@ -108,7 +108,7 @@ export default function CollectionsPage() {
         <PillTabs
           active={activeCategory}
           items={categories}
-          onChange={(item) => startTransition(() => setActiveCategory(item))}
+          onChange={(item) => startTransition(() => setActiveCategory(item as FilterCategory))}
         />
       </Reveal>
 

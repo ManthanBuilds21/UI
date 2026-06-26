@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, ShieldCheck, MapPin } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowRight, ShieldCheck } from 'lucide-react'
+
 import { useAuth } from '../../hooks/useAuth'
 import { useStore } from '../../hooks/useStore'
 import { useToast } from '../../hooks/useToast'
@@ -19,7 +19,7 @@ import { formatPrice } from '../../utils/format'
 type CheckoutStep = 'address' | 'review' | 'payment'
 
 export default function CheckoutPage() {
-  const { token, isReady, isAuthenticated } = useAuth()
+  const { token, isReady } = useAuth()
   const { cart, subtotal, isLoading: storeLoading } = useStore()
   const { products, isLoading: catalogLoading } = useCatalog()
   const toast = useToast()

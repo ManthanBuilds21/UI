@@ -5,8 +5,6 @@ import LookbookSection from '../../sections/LookbookSection'
 import NewsletterSection from '../../sections/NewsletterSection'
 import BestSellersSection from '../../sections/products/BestSellersSection'
 import NewArrivalsSection from '../../sections/products/NewArrivalsSection'
-import ShopByCategorySection from '../../sections/ShopByCategorySection'
-import StorefrontHero from '../../sections/StorefrontHero'
 import SEO from '../../components/seo/SEO'
 
 export default function HomePage() {

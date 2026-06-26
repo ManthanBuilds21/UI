@@ -9,10 +9,14 @@ import catalogRouter from './routes/catalog.js';
 import newsletterRouter from './routes/newsletter.js';
 import storeRouter from './routes/store.js';
 import adminRouter from './routes/admin.js';
+import checkoutRouter, { webhookHandler } from './routes/checkout.js';
+import accountRouter from './routes/account.js';
 const app = express();
 app.use(cors({
     origin: config.clientOrigin,
 }));
+// ── Webhook must be registered BEFORE express.json() so it receives raw Buffer
+app.post('/api/checkout/webhook', express.raw({ type: 'application/json' }), webhookHandler);
 app.use(express.json());
 app.get('/api/health', (_request, response) => {
     response.json({ status: 'ok' });
@@ -22,6 +26,8 @@ app.use('/api/catalog', catalogRouter);
 app.use('/api/newsletter', newsletterRouter);
 app.use('/api/store', storeRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/checkout', checkoutRouter);
+app.use('/api/account', accountRouter);
 app.use((_request, response) => {
     response.status(404).json({
         message: 'Route not found.',

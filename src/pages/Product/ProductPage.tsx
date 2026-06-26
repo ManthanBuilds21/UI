@@ -15,7 +15,7 @@ import { formatPrice } from '../../utils/format'
 export default function ProductPage() {
   const { slug = '' } = useParams()
   const { products } = useCatalog()
-  const { addToCart, isWishlisted, toggleWishlist } = useStore()
+  const { addToCart, isWishlisted, toggleWishlist, isMutating } = useStore()
   const [product, setProduct] = useState<Product | null>(null)
   const [selectedImage, setSelectedImage] = useState(0)
   const [selectedSize, setSelectedSize] = useState('')
@@ -58,7 +58,6 @@ export default function ProductPage() {
   const relatedProducts = products
     .filter((entry) => entry.slug !== product.slug && entry.collection === product.collection)
     .slice(0, 3)
-  const activeSize = selectedSize || product.sizes[0] || ''
 
   return (
     <div className="page-shell pb-8">

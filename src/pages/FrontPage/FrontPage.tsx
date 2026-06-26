@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, type CSSProperties, type FormEvent } 
 import { ArrowLeft, ArrowRight, ShieldCheck, UserRound, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { ApiError } from '../../lib/api'
+import { ApiError, forgotPassword, resetPassword } from '../../lib/api'
 import { useAuth } from '../../hooks/useAuth'
 import { useToast } from '../../hooks/useToast'
 import SEO from '../../components/seo/SEO'
@@ -14,7 +14,7 @@ interface FigurineImage {
 }
 
 type AuthRole = 'user' | 'admin'
-type AuthMode = 'login' | 'signup'
+type AuthMode = 'login' | 'signup' | 'forgot' | 'reset'
 type CarouselRole = 'center' | 'left' | 'right' | 'back'
 
 const IMAGES: FigurineImage[] = [
@@ -109,6 +109,7 @@ export default function FrontPage() {
     email: '',
     password: '',
     confirmPassword: '',
+    token: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -140,7 +141,7 @@ export default function FrontPage() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    if (authMode === 'signup' && formState.password !== formState.confirmPassword) {
+    if ((authMode === 'signup' || authMode === 'reset') && formState.password !== formState.confirmPassword) {
       toast.error('Passwords do not match.')
       return
     }
@@ -154,23 +155,46 @@ export default function FrontPage() {
           password: formState.password,
           role: authRole,
         })
-      } else {
+        setAuthOpen(false)
+        setFormState({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          token: '',
+        })
+        navigate(authRole === 'admin' ? '/admin' : '/website')
+      } else if (authMode === 'signup') {
         await signup({
           name: formState.name,
           email: formState.email,
           password: formState.password,
           role: authRole,
         })
+        setAuthOpen(false)
+        setFormState({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          token: '',
+        })
+        navigate(authRole === 'admin' ? '/admin' : '/website')
+      } else if (authMode === 'forgot') {
+        const res = await forgotPassword(formState.email)
+        toast.success(res.message || 'Reset code sent!')
+        setAuthMode('reset')
+      } else if (authMode === 'reset') {
+        const res = await resetPassword(formState.email, formState.token, formState.password)
+        toast.success(res.message || 'Password reset successful!')
+        setAuthMode('login')
+        setFormState((current) => ({
+          ...current,
+          password: '',
+          confirmPassword: '',
+          token: '',
+        }))
       }
-
-      setAuthOpen(false)
-      setFormState({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-      })
-      navigate(authRole === 'admin' ? '/admin' : '/website')
     } catch (error) {
       toast.error(
         error instanceof ApiError ? error.message : 'We could not complete authentication.',
@@ -323,26 +347,34 @@ export default function FrontPage() {
                   </button>
                 </div>
 
-                <div className="relative mt-3 flex rounded-full border border-white/20 bg-black/10 p-1">
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode('login')}
-                    className={`flex-1 rounded-full px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.24em] transition-colors ${
-                      authMode === 'login' ? 'bg-white text-black' : 'text-white/72'
-                    }`}
-                  >
-                    Login
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode('signup')}
-                    className={`flex-1 rounded-full px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.24em] transition-colors ${
-                      authMode === 'signup' ? 'bg-[#d98b69] text-white' : 'text-white/72'
-                    }`}
-                  >
-                    Sign Up
-                  </button>
-                </div>
+                {authMode === 'login' || authMode === 'signup' ? (
+                  <div className="relative mt-3 flex rounded-full border border-white/20 bg-black/10 p-1">
+                    <button
+                      type="button"
+                      onClick={() => setAuthMode('login')}
+                      className={`flex-1 rounded-full px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.24em] transition-colors ${
+                        authMode === 'login' ? 'bg-white text-black' : 'text-white/72'
+                      }`}
+                    >
+                      Login
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAuthMode('signup')}
+                      className={`flex-1 rounded-full px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.24em] transition-colors ${
+                        authMode === 'signup' ? 'bg-[#d98b69] text-white' : 'text-white/72'
+                      }`}
+                    >
+                      Sign Up
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-center py-2.5 mt-2">
+                    <h3 className="text-xs font-semibold uppercase tracking-[0.24em] text-white/90">
+                      {authMode === 'forgot' ? 'Reset Password' : 'Enter New Password'}
+                    </h3>
+                  </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="relative mt-3 grid gap-2.5">
                   {authMode === 'signup' ? (
@@ -355,25 +387,44 @@ export default function FrontPage() {
                       className="rounded-[16px] border border-white/18 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-white/55"
                     />
                   ) : null}
-                  <input
-                    type="email"
-                    value={formState.email}
-                    onChange={(event) =>
-                      setFormState((current) => ({ ...current, email: event.target.value }))
-                    }
-                    placeholder={authRole === 'admin' ? 'Admin email' : 'Email address'}
-                    className="rounded-[16px] border border-white/18 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-white/55"
-                  />
-                  <input
-                    type="password"
-                    value={formState.password}
-                    onChange={(event) =>
-                      setFormState((current) => ({ ...current, password: event.target.value }))
-                    }
-                    placeholder="Password"
-                    className="rounded-[16px] border border-white/18 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-white/55"
-                  />
-                  {authMode === 'signup' ? (
+
+                  {authMode !== 'reset' && (
+                    <input
+                      type="email"
+                      value={formState.email}
+                      onChange={(event) =>
+                        setFormState((current) => ({ ...current, email: event.target.value }))
+                      }
+                      placeholder={authRole === 'admin' ? 'Admin email' : 'Email address'}
+                      className="rounded-[16px] border border-white/18 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-white/55"
+                    />
+                  )}
+
+                  {authMode === 'reset' && (
+                    <input
+                      type="text"
+                      value={formState.token}
+                      onChange={(event) =>
+                        setFormState((current) => ({ ...current, token: event.target.value }))
+                      }
+                      placeholder="Reset Code (6-digit)"
+                      className="rounded-[16px] border border-white/18 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-white/55"
+                    />
+                  )}
+
+                  {authMode !== 'forgot' && (
+                    <input
+                      type="password"
+                      value={formState.password}
+                      onChange={(event) =>
+                        setFormState((current) => ({ ...current, password: event.target.value }))
+                      }
+                      placeholder={authMode === 'reset' ? 'New Password' : 'Password'}
+                      className="rounded-[16px] border border-white/18 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-white/55"
+                    />
+                  )}
+
+                  {authMode === 'signup' || authMode === 'reset' ? (
                     <input
                       type="password"
                       value={formState.confirmPassword}
@@ -383,10 +434,31 @@ export default function FrontPage() {
                           confirmPassword: event.target.value,
                         }))
                       }
-                      placeholder="Confirm password"
+                      placeholder={authMode === 'reset' ? 'Confirm New Password' : 'Confirm password'}
                       className="rounded-[16px] border border-white/18 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-white/55"
                     />
                   ) : null}
+
+                  {authMode === 'login' && (
+                    <button
+                      type="button"
+                      onClick={() => setAuthMode('forgot')}
+                      className="text-left text-xs text-white/70 hover:text-white hover:underline transition-colors mt-0.5 ml-1 self-start"
+                    >
+                      Forgot password?
+                    </button>
+                  )}
+
+                  {(authMode === 'forgot' || authMode === 'reset') && (
+                    <button
+                      type="button"
+                      onClick={() => setAuthMode('login')}
+                      className="text-left text-xs text-white/70 hover:text-white hover:underline transition-colors mt-0.5 ml-1 self-start"
+                    >
+                      Back to Login
+                    </button>
+                  )}
+
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -398,9 +470,13 @@ export default function FrontPage() {
                       ? authRole === 'admin'
                         ? 'Admin Login'
                         : 'Continue'
-                      : authRole === 'admin'
+                      : authMode === 'signup'
+                      ? authRole === 'admin'
                         ? 'Create Admin'
-                        : 'Create Account'}
+                        : 'Create Account'
+                      : authMode === 'forgot'
+                      ? 'Send Reset Code'
+                      : 'Reset Password'}
                   </button>
                 </form>
               </motion.div>

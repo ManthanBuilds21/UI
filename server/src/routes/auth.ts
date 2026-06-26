@@ -111,4 +111,86 @@ router.get(
   }),
 )
 
+// In-memory store for password reset tokens: email.toLowerCase() -> { token, expiresAt }
+const resetTokens = new Map<string, { token: string; expiresAt: number }>()
+
+const forgotPasswordSchema = z.object({
+  email: z.string().trim().email(),
+})
+
+const resetPasswordSchema = z.object({
+  email: z.string().trim().email(),
+  token: z.string().trim(),
+  password: z.string().min(8),
+})
+
+router.post(
+  '/forgot-password',
+  asyncHandler(async (request, response) => {
+    const { email } = forgotPasswordSchema.parse(request.body)
+    const normalizedEmail = email.toLowerCase()
+
+    const user = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+    })
+
+    if (user) {
+      // Generate a 6-digit verification code
+      const token = Math.floor(100000 + Math.random() * 900000).toString()
+      resetTokens.set(normalizedEmail, {
+        token,
+        expiresAt: Date.now() + 15 * 60 * 1000, // 15 minutes
+      })
+
+      // Simulate sending email by logging to the backend console
+      console.log('\n==================================================')
+      console.log(`[PASSWORD RESET] Token for ${email}: ${token}`)
+      console.log('==================================================\n')
+    }
+
+    response.json({
+      success: true,
+      message: 'If that email exists in our system, we have sent a reset code.',
+    })
+  }),
+)
+
+router.post(
+  '/reset-password',
+  asyncHandler(async (request, response) => {
+    const { email, token, password } = resetPasswordSchema.parse(request.body)
+    const normalizedEmail = email.toLowerCase()
+
+    const stored = resetTokens.get(normalizedEmail)
+
+    if (!stored || stored.token !== token || Date.now() > stored.expiresAt) {
+      throw new ApiError(400, 'Invalid or expired reset token.')
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+    })
+
+    if (!user) {
+      throw new ApiError(404, 'User not found.')
+    }
+
+    // Update password
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordHash: await bcrypt.hash(password, 12),
+      },
+    })
+
+    // Clean up token
+    resetTokens.delete(normalizedEmail)
+
+    response.json({
+      success: true,
+      message: 'Password has been reset successfully.',
+    })
+  }),
+)
+
 export default router

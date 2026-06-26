@@ -48,5 +48,6 @@ export function serializeProduct(product) {
         sizes: product.sizes,
         features: product.features,
         images: product.images,
+        stockBySize: product.stockBySize,
     };
 }
